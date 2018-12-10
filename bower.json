@@ -1,6 +1,6 @@
 {
   "name": "collapsible-selector",
-  "description": "Selector element that collapses based on available width.",
+  "description": "Polymer JS custom selector element that collapses based on available width.",
   "main": "collapsible-selector.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.9.0"
