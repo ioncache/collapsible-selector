@@ -3,9 +3,21 @@
 
   "verbose": false,
 
+  "clientOptions": {
+    "environmentScripts": [
+      "accessibility-developer-tools/dist/js/axs_testing.js",
+      "async/lib/async.js",
+      "chai/chai.js",
+      "lodash/lodash.js",
+      "mocha/mocha.js",
+      "sinon-chai/lib/sinon-chai.js",
+      "sinonjs/sinon.js",
+      "stacky/browser.js"
+    ]
+  },
+
   "plugins": {
     "local": {
-      "disabled": true,
       "browsers": ["chrome"]
     },
 

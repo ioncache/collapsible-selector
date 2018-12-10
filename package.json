@@ -5,14 +5,15 @@
   "main": "index.html",
   "scripts": {
     "serve": "./node_modules/.bin/polymer serve",
-    "test": "./node_modules/.bin/polymer test --plugin local"
+    "test": "./node_modules/.bin/polymer test"
   },
   "author": "Mark Jubenville <ioncache@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "polymer-cli": "^1.1.0",
     "split-me": "^1.1.5",
-    "wct-istanbul": "^0.14.3",
-    "wct-xunit-reporter": "^1.0.2"
+    "wct-xunit-reporter": "^1.0.2",
+    "web-component-tester": "^6.2.0",
+    "web-component-tester-istanbul": "^0.10.0"
   }
 }
