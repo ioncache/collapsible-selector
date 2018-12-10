@@ -1,6 +1,6 @@
 # \<collapsible-selector\>
 
-Selector element that collapses based on available width.
+Polymer JS custom selector element that collapses based on available width.
 
 ## Install dependencies
 
