@@ -1,0 +1,32 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="styles/collapsible-selector-style.html">
+
+<!--
+`collapsible-selector`
+Selector element that collapses based on available width.
+
+@demo demo/index.html
+-->
+
+<dom-module id="collapsible-selector">
+  <template>
+    <style include="collapsible-selector-style"></style>
+
+    <nav>
+      <template is="dom-repeat" items="[[items]]">
+        <div
+          class$="[[_setSelectedClass(item, selectedItem)]]"
+          data-item-name="[[item]]"
+          on-tap="_setSelectedItem"
+        >[[item]]</div>
+      </template>
+    </nav>
+
+    <div class="nav-bar">
+      <div class="nav-indicator"></div>
+    </div>
+  </template>
+
+  <script src="collapsible-selector.js"></script>
+</dom-module>

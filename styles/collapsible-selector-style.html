@@ -1,0 +1,66 @@
+<dom-module id="collapsible-selector-style">
+  <template>
+    <style>
+      :host {
+        display: block;
+
+        --collapsible-selector-nav-item: {
+          color: grey;
+          cursor: pointer;
+          font-family: 'Helevetic', 'Arial', sans-serif;
+          font-size: 12px;
+          font-weight: bold;
+          padding: 5px;
+          text-transform: uppercase;
+          transition: color 150ms ease-in;
+        };
+
+        --collapsible-selector-nav-bar: {
+          background-color: lightgrey;
+          height: 1px;
+          margin-top: 5px;
+          width: 100%;
+        };
+
+        --collapsible-selector-nav-indicator: {
+          background-color: rebeccapurple;
+          bottom: 0;
+          height: 2px;
+          transition: left 150ms ease-in, width 150ms ease-in;
+        };
+
+        --collapsible-selector-nav-selected: {
+          color: rebeccapurple;
+        };
+      }
+
+      nav {
+        display: flex;
+        flex-flow: row nowrap;
+        overflow: hidden;
+      }
+
+      nav > div {
+        @apply --collapsible-selector-nav-item;
+
+        flex: 0 0 auto;
+      }
+
+      .nav-bar {
+        @apply --collapsible-selector-nav-bar;
+
+        position: relative;
+      }
+
+      .nav-indicator {
+        @apply --collapsible-selector-nav-indicator;
+
+        position: absolute;
+      }
+
+      nav > div.selected {
+        @apply --collapsible-selector-nav-selected;
+      }
+    </style>
+  </template>
+</dom-module>

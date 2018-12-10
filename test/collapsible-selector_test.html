@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>collapsible-selector test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../collapsible-selector.html">
+  </head>
+  <body>
+    <test-fixture id="basic">
+      <template>
+        <collapsible-selector></collapsible-selector>
+      </template>
+    </test-fixture>
+
+    <script>
+      describe('collapsible-selector', () => {
+        it('instantiating the element works', () => {
+          // Arrange
+          const element = fixture('basic');
+
+          // Assert
+          expect(element.is).to.equal('collapsible-selector');
+        });
+
+        context('when instantiating the element with items and a selected index', () => {
+          let element;
+
+          beforeEach(() => {
+            element = fixture('basic', items: ['foo', 'bar', 'baz'], selectedItem: 'foo');
+          });
+
+          it('the element has the correct number of nav items', () => {
+            // Arrange
+            const navItems = element.querySelectorAll('nav > div');
+
+            // Assert
+            expect(navItems.length).to.equal(3);
+          });
+
+          it('the correct nav item is selected', () => {
+            // Arrange
+            const selectedItem = element.querySelectorAll('nav > div').filter(i => i.innerText === 'foo');
+
+            // Assert
+            expect(selectedItem.classList().has('slected')).to.be.true;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

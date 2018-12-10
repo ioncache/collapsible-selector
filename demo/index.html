@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>collapsible-selector demo</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="https://unpkg.com/split-me/dist/split-me.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../collapsible-selector.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles"></style>
+  </head>
+
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic collapsible-selector demo</h3>
+
+      <collapsible-selector-demo></collapsible-selector-demo>
+
+      <dom-module id="collapsible-selector-demo">
+        <template>
+          <style>
+            .demo-container {
+              border: 1px solid black;
+              margin: 0 auto;
+              padding: 10px;
+              width: 800px;
+            }
+
+            split-me > * {
+              padding: 20px;
+            }
+          </style>
+
+          <div class="demo-container">
+            <split-me n="2" min-sizes="0.2, 0.2">
+              <div slot="0">
+                <template is="dom-repeat" items="[[tabs]]">
+                  <div>
+                    <input type="checkbox" id="[[item.name]]" name="framework[]" value="[[item.name]]" checked$="[[item.selected]]" on-change="_changeSelected">
+                    <label for="[[item.name]]">[[item.name]]</label>
+                  </div>
+                </template>
+              </div>
+
+              <collapsible-selector
+                items="[[selectedTabs]]"
+                selected-index="{{selectedIndex}}"
+                slot="1"
+              ></collapsible-selector>
+            </split-me>
+
+          </div>
+        </template>
+      </dome-module>
+    </div>
+  </body>
+
+  <script>
+    'use strict';
+
+    Polymer({
+
+      is: 'collapsible-selector-demo',
+
+      properties: {
+        selectedItem: {
+          type: String,
+          value: 'Angular'
+        },
+
+        selectedTabs: {
+          type: Array,
+          value: []
+        },
+
+        tabs: {
+          type: Array,
+          value: [
+            {
+              name: 'Angular',
+              selected: true
+            },
+            {
+              name: 'AngularJS',
+              selected: false
+            },
+            {
+              name: 'Aurelia',
+              selected: true
+            },
+            {
+              name: 'Backbone',
+              selected: false
+            },
+            {
+              name: 'Elm',
+              selected: true
+            },
+            {
+              name: 'Ember',
+              selected: false
+            },
+            {
+              name: 'Meteor',
+              selected: true
+            },
+            {
+              name: 'Mithril',
+              selected: true
+            },
+            {
+              name: 'Polymer',
+              selected: true
+            },
+            {
+              name: 'React',
+              selected: true
+            },
+            {
+              name: 'Vue',
+              selected: true
+            }
+          ]
+        }
+      },
+
+      observers: [
+        '_tabsChanged(tabs.*)'
+      ],
+
+      _changeSelected: function(e) {
+        const changedIndex = this.tabs.findIndex(i => i.name === e.target.id);
+        this.tabs[changedIndex].selected = !this.tabs[changedIndex].selected;
+        this.notifyPath(`tabs.#${changedIndex}.selected`);
+      },
+
+      _tabsChanged: function(change) {
+        this.set('selectedTabs', this.tabs.filter(i => i.selected).map(i => i.name));
+      }
+    });
+  </script>
+</html>
