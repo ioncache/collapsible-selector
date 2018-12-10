@@ -2,13 +2,17 @@
   "name": "collapsible-selector",
   "version": "0.0.1",
   "description": "Polymer JS custom selector element that collapses based on available width.",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "./node_modules/.bin/polymer serve",
+    "test": "./node_modules/.bin/polymer test --plugin local"
   },
   "author": "Mark Jubenville <ioncache@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "polymer-cli": "^1.1.0"
+  "devDependencies": {
+    "polymer-cli": "^1.1.0",
+    "split-me": "^1.1.5",
+    "wct-istanbul": "^0.14.3",
+    "wct-xunit-reporter": "^1.0.2"
   }
 }

@@ -1,0 +1,26 @@
+{
+  "suites": ["test/"],
+
+  "verbose": false,
+
+  "plugins": {
+    "local": {
+      "disabled": true,
+      "browsers": ["chrome"]
+    },
+
+    "xunit-reporter": {
+      "output": "wct-xunit.xml"
+    },
+
+    "istanbul": {
+      "dir": "./wct_coverage",
+      "reporters": ["clover", "cobertura", "html", "text"],
+      "include": [
+        "*.html",
+        "**/*.js"
+      ],
+      "exclude": []
+    }
+  }
+}
