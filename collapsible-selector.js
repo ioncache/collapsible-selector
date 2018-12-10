@@ -34,7 +34,7 @@ Polymer({
 
   properties: {
     /**
-     * The list of items that the collaspible-selector should display
+     * The list of items that the collapsible-selector should display
      */
     items: {
       type: Array,
@@ -43,7 +43,7 @@ Polymer({
     },
 
     /**
-     * The index of the item that is currently selected
+     * The name of the item that is currently selected
      */
     selectedItem: {
       type: String,
@@ -93,7 +93,7 @@ Polymer({
   },
 
   /**
-   * Method to set a class indicating a nav item is selected
+   * Method to set a class indicating if a nav item is selected
    *
    * @param {string} item The name of the item to be selected
    * @param {number} selectedItem The name of the currently selected item
