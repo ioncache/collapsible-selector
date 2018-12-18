@@ -33,6 +33,12 @@ Polymer({
   */
 
   properties: {
+    finishedRendering: {
+      type: Boolean,
+      value: false,
+      observer: '_finishedRenderingChanged'
+    },
+
     /**
      * The list of items that the collapsible-selector should display
      */
@@ -48,6 +54,31 @@ Polymer({
     selectedItem: {
       type: String,
       observer: '_selectedItemChanged'
+    }
+  },
+
+  ready: function() {
+    // Options for the observer (which mutations to observe)
+    var config = { childList: true, subtree: true, attributes: true };
+
+    // Callback function to execute when mutations are observed
+    var callback = function(mutationsList, observer) {
+        if (this.querySelectorAll('nav > div').length === this.items.length) {
+          this.finishedRendering = true;
+          observer.disconnect();
+        }
+    }.bind(this);
+
+    // Create an observer instance linked to the callback function
+    var observer = new MutationObserver(callback);
+
+    // Start observing the target node for configured mutations
+    observer.observe(this, config);
+  },
+
+  _finishedRenderingChanged: function(nv, ov) {
+    if (nv) {
+      this._selectedItemChanged(this.selectedItem);
     }
   },
 
