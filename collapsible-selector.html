@@ -25,9 +25,9 @@ Works in a similar fashion to the tabs bar in chrome/firefox dev tools.
     <nav class="invisible">
       <template is="dom-repeat" items="[[items]]">
         <div
-          class$="nav-item [[_setSelectedClass(item, selectedItem)]]"
+          class="nav-item"
           data-item-name="[[item]]"
-          on-tap="_setSelectedItem"
+          on-tap="_setSelectedItemFromNav"
         >
           [[item]]
         </div>

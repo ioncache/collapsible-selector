@@ -4,14 +4,6 @@
   Polymer({
     is: 'collapsible-selector',
 
-    /*
-      FIXME: when selecting an item from the nav bar when the dropdown is showing,
-             and previously the currently selected item was clicked from the dropdown, ie,
-             the last nav item element is the currently selected one, we need to remember
-             that item when selecting the new one, so when we are determining which nav items to
-             hide that previously selected one stays in the visible list
-    */
-
     properties: {
       /*********************/
       /* Public properties */
@@ -48,11 +40,11 @@
       },
 
       /**
-       * Wait in miliseconds to debounce the resize event handler.
+       * Wait in milliseconds to debounce the resize event handler.
        */
       resizeWaitTime: {
         type: Number,
-        value: 20
+        value: 0
       },
 
       /**
@@ -81,18 +73,19 @@
       },
 
       /**
-       * Used to keep track of the previously selected item,
-       */
-      _previouslySelectedItem: {
-        type: String
-      },
-
-      /**
        * Keeps track of the sizes of all items, the dropdown and the nav size
        */
       _sizeInfo: {
         type: Object,
         value: {}
+      },
+
+      /**
+       * Flag to keep track of whether to skip the next _calculate call
+       */
+      _skipNextCalculate: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -102,9 +95,8 @@
 
     attached: function() {
       // setup an event listener on window resize to update the size details of the selector
-      window.addEventListener('resize', function() {
-        this._resize();
-      }.bind(this));
+      this._setupDebouncedResize();
+      window.addEventListener('resize', this._debouncedResize);
     },
 
     /*******************/
@@ -117,54 +109,14 @@
      * @returns {void}
      */
     _calculate: function() {
-      this.set('_sizeInfo', this._calculateSizeInfo());
-      this._calculateVisibleItems();
-      this._setSelectedIndicator();
-    },
-
-    /**
-     * Calculate which nav items to show
-     *
-     * Also determines whether to show the dropdown
-     *
-     * @returns {void}
-     */
-    _calculateVisibleItems: function() {
-      if (this._sizeInfo.totalItemWidth < this._sizeInfo.navWidth) {
-        for (let item of Object.keys(this._sizeInfo.itemDetails)) {
-          this._sizeInfo.itemDetails[item].el.classList.remove('hide');
-        }
-
-        this._sizeInfo.dropdownDetails.el.classList.add('hide');
+      if (this._skipNextCalculate) {
+        this._skipNextCalculate = false;
       } else {
-        let availableWidth = this._sizeInfo.navWidth - this._sizeInfo.dropdownDetails.width;
-
-        let visibleItemWidth = Object.keys(this._sizeInfo.itemDetails).reduce((acc, i) => {
-          if (!this._sizeInfo.itemDetails[i].el.classList.contains('hide')) {
-            return acc + this._sizeInfo.itemDetails[i].el.offsetWidth;
-          } else {
-            return acc;
-          }
-        }, 0);
-
-        if (visibleItemWidth > availableWidth) {
-          this.set('_dropdownItems', []);
-
-          for (let i = this.items.length - 1; i >= 0; i--) {
-            if ([this.selectedItem, this._previouslySelectedItem].indexOf(this.items[i]) === -1) {
-              visibleItemWidth -= this._sizeInfo.itemDetails[this.items[i]].width;
-              this._sizeInfo.itemDetails[this.items[i]].el.classList.add('hide');
-              this.unshift('_dropdownItems', this.items[i]);
-
-              if (visibleItemWidth <= availableWidth) {
-                break;
-              }
-            }
-          }
-
-          this._sizeInfo.dropdownDetails.el.classList.remove('hide');
-        }
+        this.set('_sizeInfo', this._calculateSizeInfo());
+        this._calculateVisibleItems();
       }
+
+      this._setSelectedIndicator();
     },
 
     /**
@@ -183,6 +135,9 @@
         (accumulator, item, index) => {
           // remove the hide class as items set to display: none have no width
           // and we want to ensure we recalculate the correct sizes of all items
+          // FIXME: possibly we should just draw a copy of all the items offscreen once
+          //        and calculate sizes there instead, that way the items in the
+          //        nav bar aren't briefly shown before possibly being rehidden
           item.classList.remove('hide');
 
           accumulator.itemDetails[item.dataItemName] = {
@@ -204,6 +159,62 @@
           totalItemWidth: 0
         }
       );
+    },
+
+    /**
+     * Calculate which nav items to show
+     *
+     * Also determines whether to show the dropdown
+     *
+     * @returns {void}
+     */
+    _calculateVisibleItems: function() {
+      if (this._sizeInfo.totalItemWidth < this._sizeInfo.navWidth) {
+        // when there is room to display all the nav items, ensure none have the hidden class
+        for (let item of Object.keys(this._sizeInfo.itemDetails)) {
+          this._sizeInfo.itemDetails[item].el.classList.remove('hide');
+        }
+
+        // when there is room for all nav items, the dropdown can be hidden
+        this._sizeInfo.dropdownDetails.el.classList.add('hide');
+      } else {
+        let availableWidth = this._sizeInfo.navWidth - this._sizeInfo.dropdownDetails.width;
+
+        let visibleItemWidth = Object.keys(this._sizeInfo.itemDetails).reduce((acc, i) => {
+          if (!this._sizeInfo.itemDetails[i].el.classList.contains('hide')) {
+            return acc + this._sizeInfo.itemDetails[i].el.offsetWidth;
+          } else {
+            return acc;
+          }
+        }, 0);
+
+        if (visibleItemWidth > availableWidth) {
+          this.set('_dropdownItems', []);
+
+          for (let i = this.items.length - 1; i >= 0; i--) {
+            // ignore the currently selected item so that it stays always visible
+            if (this.items[i] !== this.selectedItem) {
+              visibleItemWidth -= this._sizeInfo.itemDetails[this.items[i]].width;
+              this._sizeInfo.itemDetails[this.items[i]].el.classList.add('hide');
+              this.unshift('_dropdownItems', this.items[i]);
+
+              if (visibleItemWidth <= availableWidth) {
+                break;
+              }
+            }
+          }
+
+          this._sizeInfo.dropdownDetails.el.classList.remove('hide');
+        }
+      }
+    },
+
+    _closeDropdown: function(e) {
+      if (e) {
+        e.preventDefault();
+      }
+
+      this.querySelector('.dropdown-items').classList.remove('dropdown-items-visible');
     },
 
     /**
@@ -248,14 +259,6 @@
       observer.observe(this.querySelector('nav'), { childList: true });
     },
 
-    _closeDropdown: function(e) {
-      if (e) {
-        e.preventDefault();
-      }
-
-      this.querySelector('.dropdown-items').classList.remove('dropdown-items-visible');
-    },
-
     _openDropdown: function(e) {
       if (e) {
         e.preventDefault();
@@ -271,17 +274,8 @@
      * @returns {void}
      */
     _resizeEventNameChanged: function(newEventName, oldEventName) {
-      // setup a debounce3d version of the resize handler
-      if (!this._debouncedResize) {
-        this._debouncedResize = _.debounce(
-          this._resize.bind(this),
-          this.resizeWaitTime,
-          {
-            leading: true,
-            maxWait: this.resizeWaitTime * 5
-          }
-        );
-      }
+      // setup a debounced version of the resize handler
+      this._setupDebouncedResize();
 
       if (newEventName !== oldEventName) {
         if (oldEventName) {
@@ -316,8 +310,13 @@
      */
     _selectedItemChanged: function(newSelectedItem, oldSelectedItem) {
       if (newSelectedItem !== oldSelectedItem) {
-        this._previouslySelectedItem = oldSelectedItem;
         this._calculate();
+
+        for (let item of Object.keys(this._sizeInfo.itemDetails)) {
+          this._sizeInfo.itemDetails[item].el.classList.remove('selected');
+        }
+
+        this._sizeInfo.itemDetails[newSelectedItem].el.classList.add('selected');
       }
     },
 
@@ -344,19 +343,6 @@
     },
 
     /**
-     * Method to set a class indicating if a nav item is selected
-     *
-     * @param {string} item The name of the item to be selected
-     * @param {number} selectedItem The name of the currently selected item
-     *
-     * @returns {string} Returns an empty string or the selected class name
-     *
-     */
-    _setSelectedClass: function(item, selectedItem) {
-      return item === selectedItem ? 'selected' : '';
-    },
-
-    /**
      * Method to set the selected item based on a tap event on a nav item
      *
      * @param {event} e Polymer on-tap event for a selected nav item
@@ -369,6 +355,30 @@
 
       this.selectedItem = e.target.dataItemName;
       this._closeDropdown();
+    },
+
+    _setSelectedItemFromNav: function(e) {
+      this._skipNextCalculate = true;
+      this._setSelectedItem(e);
+    },
+
+    /**
+     * Sets up a debounced version of this.resize
+     *
+     * @returns {void}
+     */
+    _setupDebouncedResize: function() {
+      // setup a debounced version of the resize handler
+      if (!this._debouncedResize) {
+        this._debouncedResize = _.debounce(
+          this._resize.bind(this),
+          this.resizeWaitTime,
+          {
+            leading: true,
+            maxWait: this.resizeWaitTime * 5
+          }
+        );
+      }
     }
   });
 })();
