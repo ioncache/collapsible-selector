@@ -1,10 +1,16 @@
+<!-- external imports -->
+
 <link rel="import" href="../polymer/polymer.html">
+
+<!-- local imports -->
 
 <link rel="import" href="styles/collapsible-selector-style.html">
 
 <!--
 `collapsible-selector`
 Polymer JS custom selector element that collapses based on available width.
+
+Works in a similar fashion to the tabs bar in chrome/firefox dev tools.
 
 @demo demo/index.html
 -->
@@ -13,17 +19,41 @@ Polymer JS custom selector element that collapses based on available width.
   <template>
     <style include="collapsible-selector-style"></style>
 
-    <nav>
+    <nav class="invisible">
       <template is="dom-repeat" items="[[items]]">
         <div
-          class$="[[_setSelectedClass(item, selectedItem)]]"
+          class$="nav-item [[_setSelectedClass(item, selectedItem)]]"
           data-item-name="[[item]]"
           on-tap="_setSelectedItem"
-        >[[item]]</div>
+        >
+          [[item]]
+        </div>
       </template>
+
+      <div class="dropdown-container">
+        <button
+          class="dropdown-title"
+          on-focusout="_closeDropdown"
+          on-tap="_openDropdown"
+        >
+          [[dropdownText]]
+        </button>
+
+        <div class="dropdown-items">
+          <template is="dom-repeat" items="[[_dropdownItems]]">
+            <div
+              class="dropdown-item"
+              data-item-name="[[item]]"
+              on-mousedown="_setSelectedItem"
+            >
+              [[item]]
+            </div>
+          </template>
+        </div>
+      </div>
     </nav>
 
-    <div class="nav-bar">
+    <div class="nav-bar-line">
       <div class="nav-indicator"></div>
     </div>
   </template>

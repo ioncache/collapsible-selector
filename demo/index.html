@@ -64,6 +64,7 @@
                 items="[[selectedTabs]]"
                 selected-index="{{selectedIndex}}"
                 slot="1"
+                resize-event-name="selectorResized"
               ></collapsible-selector>
             </split-me>
 
@@ -146,10 +147,18 @@
         '_tabsChanged(tabs.*)'
       ],
 
+      attached: function() {
+        this.listen(this.querySelector('split-me'), 'slotResized', '_handleResize');
+      },
+
       _changeSelected: function(e) {
         const changedIndex = this.tabs.findIndex(i => i.name === e.target.id);
         this.tabs[changedIndex].selected = !this.tabs[changedIndex].selected;
         this.notifyPath(`tabs.#${changedIndex}.selected`);
+      },
+
+      _handleResize: function(e) {
+        this.fire('selectorResized');
       },
 
       _tabsChanged: function(change) {

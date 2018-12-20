@@ -1,65 +1,147 @@
+<!--
+
+  css custom properties
+  ---------------------
+
+  *** element properties ***
+  --collapsible-selector-nav-bar
+  --collapsible-selector-nav-bar-line
+  --collapsible-selector-nav-item-hover
+  --collapsible-selector-nav-indicator
+  --collapsible-selector-nav-item
+  --collapsible-selector-nav-item-selected
+
+  *** individual properties ***
+  --collapsible-selector-font-family
+  --collapsible-selector-highlight-color
+
+-->
+
 <dom-module id="collapsible-selector-style">
   <template>
     <style>
       :host {
+        --collapsible-selector-default-font-family: 'Helvetica', 'Arial', sans-serif;
+        --collapsible-selector-default-highlight-color: rebeccapurple;
+
         display: block;
+        font-family: var(--collapsible-selector-font-family, var(--collapsible-selector-default-font-family));
+      }
 
-        --collapsible-selector-nav-item: {
-          color: grey;
-          cursor: pointer;
-          font-family: 'Helevetic', 'Arial', sans-serif;
-          font-size: 12px;
-          font-weight: bold;
-          padding: 5px;
-          text-transform: uppercase;
-          transition: color 150ms ease-in;
-        };
-
-        --collapsible-selector-nav-bar: {
-          background-color: lightgrey;
-          height: 1px;
-          margin-top: 5px;
-          width: 100%;
-        };
-
-        --collapsible-selector-nav-indicator: {
-          background-color: rebeccapurple;
-          bottom: 0;
-          height: 2px;
-          transition: left 150ms ease-in, width 150ms ease-in;
-        };
-
-        --collapsible-selector-nav-selected: {
-          color: rebeccapurple;
-        };
+      * {
+        box-sizing: border-box;
       }
 
       nav {
+        align-items: center;
         display: flex;
         flex-flow: row nowrap;
-        overflow: hidden;
-      }
 
-      nav > div {
-        @apply --collapsible-selector-nav-item;
-
-        flex: 0 0 auto;
-      }
-
-      .nav-bar {
         @apply --collapsible-selector-nav-bar;
+      }
 
+      .nav-item {
+        align-items: center;
+        display: flex;
+        color: grey;
+        cursor: pointer;
+        flex: 0 0 auto;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 5px;
+        text-transform: uppercase;
+        transition: color 150ms ease-in;
+        vertical-align: middle;
+
+        @apply --collapsible-selector-nav-item;
+      }
+
+      .dropdown-container,
+      .nav-item {
+        height: 30px;
+      }
+
+      .nav-bar-line {
+        background-color: lightgrey;
+        height: 1px;
+        margin-top: 5px;
         position: relative;
+        width: 100%;
+
+        @apply --collapsible-selector-nav-bar-line;
       }
 
       .nav-indicator {
-        @apply --collapsible-selector-nav-indicator;
-
+        background-color: var(--collapsible-selector-highlight-color, --collapsible-selector-default-highlight-color);
+        bottom: 0;
+        height: 2px;
         position: absolute;
+        transition: left 150ms ease-in, width 150ms ease-in;
+
+        @apply --collapsible-selector-nav-indicator;
       }
 
-      nav > div.selected {
-        @apply --collapsible-selector-nav-selected;
+      .nav-item:hover {
+        color: var(--collapsible-selector-highlight-color, --collapsible-selector-default-highlight-color);
+
+        @apply --collapsible-selector-nav-item-hover;
+      }
+
+      .nav-item.selected {
+        color: var(--collapsible-selector-highlight-color, --collapsible-selector-default-highlight-color);
+
+        @apply --collapsible-selector-nav-item-selected;
+      }
+
+      .dropdown-container {
+        align-items: center;
+        display: flex;
+        padding: 0 5px;
+        position: relative;
+      }
+
+      .dropdown-title {
+        border: 1px solid lightgrey;
+        border-radius: 5px;
+        box-sizing: border-box;
+        cursor: pointer;
+        padding: 5px;
+        text-align: center;
+      }
+
+      .dropdown-items {
+        background-color: white;
+        height: 0;
+        left: 0;
+        overflow: hidden;
+        position: absolute;
+        transition: height 500ms ease-in;
+        top: 0;
+        z-index: 1;
+      }
+
+      .dropdown-item {
+        cursor: pointer;
+        padding: 2px 5px;
+      }
+
+      .dropdown-item:hover {
+        background-color: lightgrey;
+      }
+
+      .dropdown-items-visible {
+        border: 1px solid lightgrey;
+        padding: 5px 0;
+        overflow: auto;
+        height: auto;
+      }
+
+      .invisible {
+        opacity: 0;
+      }
+
+      .hide {
+        display: none;
       }
     </style>
   </template>
