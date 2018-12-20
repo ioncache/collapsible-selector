@@ -83,9 +83,8 @@
       /**
        * Used to keep track of the previously selected item,
        */
-      _previousItem: {
+      _previouslySelectedItem: {
         type: String
-
       },
 
       /**
@@ -96,9 +95,6 @@
         value: {}
       }
     },
-
-    observers: [
-    ],
 
     /*****************************/
     /* Polymer lifecycle methods */
@@ -115,7 +111,11 @@
     /* Private methods */
     /*******************/
 
-
+    /**
+     * Calculates all the various things needed to determing the visible items.
+     *
+     * @returns {void}
+     */
     _calculate: function() {
       this.set('_sizeInfo', this._calculateSizeInfo());
       this._calculateVisibleItems();
@@ -151,7 +151,7 @@
           this.set('_dropdownItems', []);
 
           for (let i = this.items.length - 1; i >= 0; i--) {
-            if ([this.selectedItem, this._previousItem].indexOf(this.items[i]) === -1) {
+            if ([this.selectedItem, this._previouslySelectedItem].indexOf(this.items[i]) === -1) {
               visibleItemWidth -= this._sizeInfo.itemDetails[this.items[i]].width;
               this._sizeInfo.itemDetails[this.items[i]].el.classList.add('hide');
               this.unshift('_dropdownItems', this.items[i]);
@@ -316,7 +316,7 @@
      */
     _selectedItemChanged: function(newSelectedItem, oldSelectedItem) {
       if (newSelectedItem !== oldSelectedItem) {
-        this._previousItem = oldSelectedItem;
+        this._previouslySelectedItem = oldSelectedItem;
         this._calculate();
       }
     },
