@@ -3,7 +3,8 @@
   "description": "Polymer JS custom selector element that collapses based on available width.",
   "main": "collapsible-selector.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.9.0"
+    "polymer": "Polymer/polymer#^1.9.0",
+    "lodash": "3.10.1"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.1.0",

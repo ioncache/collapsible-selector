@@ -5,18 +5,11 @@
     is: 'collapsible-selector',
 
     /*
-      FIXME: when adding/removing items the  nav indicator does not get recalculated propertly, this is
-            related to the nav indicator trying to be redrawn before the  nav items have been drawn
-
-      TODO: recalculate whenever nav bar element resizes
-            - should trigger on window resize
-            - should trigger any other time the nav bar element resizes
-              - how to do this?
-              - possibly externally monitor this some how, and pass in an event name
-                to listen for that indicates a resize change; for instance with the split-me
-                custom element used in the demo, it emits a 'slotResized' event whenever it resizes
-                one of it's elements
-              - use MutationObserver ?
+      FIXME: when selecting an item from the nav bar when the dropdown is showing,
+             and previously the currently selected item was clicked from the dropdown, ie,
+             the last nav item element is the currently selected one, we need to remember
+             that item when selecting the new one, so when we are determining which nav items to
+             hide that previously selected one stays in the visible list
     */
 
     properties: {
@@ -55,6 +48,14 @@
       },
 
       /**
+       * Wait in miliseconds to debounce the resize event handler.
+       */
+      resizeWaitTime: {
+        type: Number,
+        value: 20
+      },
+
+      /**
        * The name of the item that is currently selected
        */
       selectedItem: {
@@ -77,6 +78,14 @@
         type: String,
         value: false,
         observer: '_isLoadedChanged'
+      },
+
+      /**
+       * Used to keep track of the previously selected item,
+       */
+      _previousItem: {
+        type: String
+
       },
 
       /**
@@ -142,7 +151,7 @@
           this.set('_dropdownItems', []);
 
           for (let i = this.items.length - 1; i >= 0; i--) {
-            if (this.items[i] !== this.selectedItem) {
+            if ([this.selectedItem, this._previousItem].indexOf(this.items[i]) === -1) {
               visibleItemWidth -= this._sizeInfo.itemDetails[this.items[i]].width;
               this._sizeInfo.itemDetails[this.items[i]].el.classList.add('hide');
               this.unshift('_dropdownItems', this.items[i]);
@@ -240,6 +249,10 @@
     },
 
     _closeDropdown: function(e) {
+      if (e) {
+        e.preventDefault();
+      }
+
       this.querySelector('.dropdown-items').classList.remove('dropdown-items-visible');
     },
 
@@ -258,13 +271,25 @@
      * @returns {void}
      */
     _resizeEventNameChanged: function(newEventName, oldEventName) {
+      // setup a debounce3d version of the resize handler
+      if (!this._debouncedResize) {
+        this._debouncedResize = _.debounce(
+          this._resize.bind(this),
+          this.resizeWaitTime,
+          {
+            leading: true,
+            maxWait: this.resizeWaitTime * 5
+          }
+        );
+      }
+
       if (newEventName !== oldEventName) {
         if (oldEventName) {
-          window.removeEventListener(oldEventName, this._resize.bind(this));
+          window.removeEventListener(oldEventName, this._debouncedResize);
         }
 
         if (newEventName) {
-          window.addEventListener(newEventName, this._resize.bind(this));
+          window.addEventListener(newEventName, this._debouncedResize);
         }
       }
     },
@@ -275,7 +300,6 @@
      * @returns {void}
      */
     _resize: function() {
-      // TODO: debounce this
       if (this._isLoaded) {
         this._calculate();
       };
@@ -283,8 +307,6 @@
 
     /**
      * Watches for changes to the selected item and sets the position of the bottom bar indicator
-     *
-     * // TODO: calculate which nav items to show?
      *
      * @param {string} newSelectedItem The new value of the selectedItem property
      * @param {string} oldSelectedItem The old value of the selectedItem property
@@ -294,10 +316,16 @@
      */
     _selectedItemChanged: function(newSelectedItem, oldSelectedItem) {
       if (newSelectedItem !== oldSelectedItem) {
+        this._previousItem = oldSelectedItem;
         this._calculate();
       }
     },
 
+    /**
+     * Sets the size and position of the selected item indicator.
+     *
+     * @returns {void}
+     */
     _setSelectedIndicator: function() {
       const selectedIndex = this.items.findIndex(item => item === this.selectedItem);
       const selectedDomElement = this.querySelectorAll('.nav-item')[selectedIndex];
