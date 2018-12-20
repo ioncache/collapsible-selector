@@ -5,21 +5,8 @@
     is: 'collapsible-selector',
 
     /*
-      FIXME: when the element initially loads, the nav items are not drawn yet so they have no width
-            and the nav indicator cannot be set
-
       FIXME: when adding/removing items the  nav indicator does not get recalculated propertly, this is
             related to the nav indicator trying to be redrawn before the  nav items have been drawn
-
-      TODO: add the dropdown menu indicating which nav items cannot fit within the width of the nav bar
-            - need to calculate the width of each nav item
-            - need to calculate the width of the dropdown so we can determine how much room is
-              additionally needed when adding in the dropdown
-
-      TODO: when an item is selected from the dropdown, it should replace the last visible nav item
-            and the last visible nav item should now show in the dropdown
-            - may need to recalculate how many nav items are shown if the new nav item is larger than
-              the one being removed
 
       TODO: recalculate whenever nav bar element resizes
             - should trigger on window resize
@@ -123,7 +110,7 @@
     _calculate: function() {
       this.set('_sizeInfo', this._calculateSizeInfo());
       this._calculateVisibleItems();
-      this._selectedItemChanged(this.selectedItem);
+      this._setSelectedIndicator();
     },
 
     /**
@@ -233,16 +220,14 @@
      * @returns {void}
      */
     _itemsChanged: function(items) {
-      // Options for the observer (which mutations to observe)
-      let config = { childList: true };
-
       let observer = new MutationObserver((mutationsList, observer) => {
         if (this.querySelectorAll('.nav-item').length === items.length) {
-          this._calculate();
-
           // if the selected item is no longer in the item list, set the selected item to the first item
+          // whenever the selected item changes, this._calculate is called
           if (items.indexOf(this.selectedItem) === -1) {
             this.set('selectedItem', items[0]);
+          } else {
+            this._calculate();
           }
 
           this._isLoaded = true;
@@ -251,7 +236,7 @@
         }
       });
 
-      observer.observe(this.querySelector('nav'), config);
+      observer.observe(this.querySelector('nav'), { childList: true });
     },
 
     _closeDropdown: function(e) {
@@ -309,22 +294,24 @@
      */
     _selectedItemChanged: function(newSelectedItem, oldSelectedItem) {
       if (newSelectedItem !== oldSelectedItem) {
-        const selectedIndex = this.items.findIndex(item => item === newSelectedItem);
-        const selectedDomElement = this.querySelectorAll('.nav-item')[selectedIndex];
+        this._calculate();
+      }
+    },
 
-        if (selectedDomElement) {
-          selectedDomElement.classList.remove('hide');
+    _setSelectedIndicator: function() {
+      const selectedIndex = this.items.findIndex(item => item === this.selectedItem);
+      const selectedDomElement = this.querySelectorAll('.nav-item')[selectedIndex];
 
-          const container = this.querySelector('nav');
-          const leftPosition = selectedDomElement.getBoundingClientRect().x - container.getBoundingClientRect().x;
+      if (selectedDomElement) {
+        selectedDomElement.classList.remove('hide');
 
-          this.querySelector('.nav-indicator').setAttribute(
-            'style',
-            `left: ${leftPosition}px; width: ${selectedDomElement.offsetWidth}px;`
-          );
-        }
+        const container = this.querySelector('nav');
+        const leftPosition = selectedDomElement.getBoundingClientRect().x - container.getBoundingClientRect().x;
 
-        this._calculateVisibleItems();
+        this.querySelector('.nav-indicator').setAttribute(
+          'style',
+          `left: ${leftPosition}px; width: ${selectedDomElement.offsetWidth}px;`
+        );
       }
     },
 
