@@ -4,15 +4,19 @@
   ---------------------
 
   *** element properties ***
+  --collapsible-selector-dropdown
+  --collapsible-selector-dropdown-button
+  --collapsible-selector-dropdown-item
+  --collapsible-selector-dropdown-item-hover
+  --collapsible-selector-font
   --collapsible-selector-nav-bar
   --collapsible-selector-nav-bar-line
-  --collapsible-selector-nav-item-hover
   --collapsible-selector-nav-indicator
   --collapsible-selector-nav-item
+  --collapsible-selector-nav-item-hover
   --collapsible-selector-nav-item-selected
 
   *** individual properties ***
-  --collapsible-selector-font-family
   --collapsible-selector-highlight-color
 
 -->
@@ -21,11 +25,13 @@
   <template>
     <style>
       :host {
-        --collapsible-selector-default-font-family: 'Helvetica', 'Arial', sans-serif;
-        --collapsible-selector-default-highlight-color: rebeccapurple;
-
+        color: grey;
         display: block;
-        font-family: var(--collapsible-selector-font-family, var(--collapsible-selector-default-font-family));
+        font-family: 'Helvetica', 'Arial', sans-serif;
+
+        @apply --collapsible-selector-font;
+
+        --collapsible-selector-default-highlight-color: var(--collapsible-selector-highlight-color, rebeccapurple);
       }
 
       * {
@@ -40,10 +46,43 @@
         @apply --collapsible-selector-nav-bar;
       }
 
+      button {
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+
+        background: transparent;
+        border: none;
+        box-sizing: border-box;
+        color: inherit;
+        font: inherit;
+        line-height: normal;
+        margin: 0;
+        overflow: visible;
+        padding: 0;
+
+        /* Corrects font smoothing for webkit */
+        -webkit-font-smoothing: inherit;
+        -moz-osx-font-smoothing: inherit;
+      }
+
+      button::-moz-focus-inner {
+        border: 0;
+      }
+
+      button:focus {
+        outline: 2px solid var(--collapsible-selector-highlight-color);
+        outline-offset: 0;
+      }
+
+      .dropdown-container,
+      .nav-item {
+        height: 30px;
+      }
+
       .nav-item {
         align-items: center;
         display: flex;
-        color: grey;
         cursor: pointer;
         flex: 0 0 auto;
         font-size: 12px;
@@ -54,11 +93,6 @@
         vertical-align: middle;
 
         @apply --collapsible-selector-nav-item;
-      }
-
-      .dropdown-container,
-      .nav-item {
-        height: 30px;
       }
 
       .nav-bar-line {
@@ -82,13 +116,13 @@
       }
 
       .nav-item:hover {
-        color: var(--collapsible-selector-highlight-color, --collapsible-selector-default-highlight-color);
+        color: var(--collapsible-selector-highlight-color, var(--collapsible-selector-default-highlight-color));
 
         @apply --collapsible-selector-nav-item-hover;
       }
 
       .nav-item.selected {
-        color: var(--collapsible-selector-highlight-color, --collapsible-selector-default-highlight-color);
+        color: var(--collapsible-selector-highlight-color, var(--collapsible-selector-default-highlight-color));
 
         @apply --collapsible-selector-nav-item-selected;
       }
@@ -107,15 +141,16 @@
         cursor: pointer;
         padding: 5px;
         text-align: center;
+
+        @apply --collapsible-selector-font;
+        @apply --collapsible-selector-dropdown-button;
       }
 
       .dropdown-items {
-        background-color: white;
         height: 0;
         left: 0;
         overflow: hidden;
         position: absolute;
-        transition: height 500ms ease-in;
         top: 0;
         z-index: 1;
       }
@@ -123,17 +158,25 @@
       .dropdown-item {
         cursor: pointer;
         padding: 2px 5px;
+
+        @apply --collapsible-selector-dropdown-item;
       }
 
       .dropdown-item:hover {
         background-color: lightgrey;
+
+        @apply --collapsible-selector-dropdown-item-hover;
       }
 
       .dropdown-items-visible {
+        background-color: white;
         border: 1px solid lightgrey;
         padding: 5px 0;
         overflow: auto;
         height: auto;
+        transition: height 150ms ease-in;
+
+        @apply --collapsible-selector-dropdown;
       }
 
       .invisible {

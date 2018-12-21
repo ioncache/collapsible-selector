@@ -52,7 +52,8 @@
        */
       selectedItem: {
         type: String,
-        observer: '_selectedItemChanged'
+        observer: '_selectedItemChanged',
+        notify: true
       },
 
       /**********************/
@@ -155,7 +156,7 @@
             width: this.querySelector('.dropdown-container').offsetWidth
           },
           itemDetails: {},
-          navWidth: this.querySelector('.nav-bar-line').offsetWidth,
+          navWidth: this.querySelector('.nav-bar').offsetWidth,
           totalItemWidth: 0
         }
       );
@@ -309,7 +310,10 @@
      *
      */
     _selectedItemChanged: function(newSelectedItem, oldSelectedItem) {
-      if (newSelectedItem !== oldSelectedItem) {
+      if (
+          newSelectedItem !== oldSelectedItem &&
+          _.get(this._sizeInfo.itemDetails, newSelectedItem)
+        ) {
         this._calculate();
 
         for (let item of Object.keys(this._sizeInfo.itemDetails)) {

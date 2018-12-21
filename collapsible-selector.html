@@ -22,15 +22,15 @@ Works in a similar fashion to the tabs bar in chrome/firefox dev tools.
   <template>
     <style include="collapsible-selector-style"></style>
 
-    <nav class="invisible">
+    <nav class="nav-bar invisible">
       <template is="dom-repeat" items="[[items]]">
-        <div
+        <button
           class="nav-item"
           data-item-name="[[item]]"
           on-tap="_setSelectedItemFromNav"
         >
           [[item]]
-        </div>
+        </button>
       </template>
 
       <div class="dropdown-container">
@@ -44,13 +44,13 @@ Works in a similar fashion to the tabs bar in chrome/firefox dev tools.
 
         <div class="dropdown-items">
           <template is="dom-repeat" items="[[_dropdownItems]]">
-            <div
+            <button
               class="dropdown-item"
               data-item-name="[[item]]"
               on-mousedown="_setSelectedItem"
             >
               [[item]]
-            </div>
+            </button>
           </template>
         </div>
       </div>

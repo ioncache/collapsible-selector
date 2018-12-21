@@ -37,6 +37,10 @@
       <dom-module id="collapsible-selector-demo">
         <template>
           <style>
+            .currently-selected {
+              margin-bottom: 15px;
+            }
+
             .demo-container {
               border: 1px solid black;
               box-sizing: border-box;
@@ -54,6 +58,7 @@
           <div class="demo-container">
             <split-me n="2" min-sizes="0.2, 0.2">
               <div slot="0">
+                <div class="currently-selected">Currently selected: [[selectedItem]]</div>
                 <template is="dom-repeat" items="[[tabs]]">
                   <div>
                     <input type="checkbox" id="[[item.name]]" name="framework[]" value="[[item.name]]" checked$="[[item.selected]]" on-change="_changeSelected">
@@ -64,7 +69,7 @@
 
               <collapsible-selector
                 items="[[selectedTabs]]"
-                selected-index="{{selectedIndex}}"
+                selected-item="{{selectedItem}}"
                 slot="1"
                 resize-event-name="selectorResized"
               ></collapsible-selector>
