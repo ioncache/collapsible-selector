@@ -259,7 +259,8 @@
           if (_.findIndex(items, i => i.value === this.selectedItem) === -1) {
             // if the selected item is no longer in the item list, set the selected item to the first item
             // whenever the selected item changes this._calculate is called
-            this.set('selectedItem', items[0].value);
+            // in the case where there are no items in the list, set the selected value to an empty string
+            this.set('selectedItem', items[0] ? items[0].value : '');
           } else {
             this._calculate();
           }

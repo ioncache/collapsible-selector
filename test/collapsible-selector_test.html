@@ -22,33 +22,70 @@
       describe('collapsible-selector', () => {
         it('instantiating the element works', () => {
           // Arrange
-          const element = fixture('basic');
+          const element = fixture('basic');;
 
           // Assert
           expect(element.is).to.equal('collapsible-selector');
         });
 
-        context('when instantiating the element with items and a selected index', () => {
-          let element;
-
-          beforeEach(() => {
-            element = fixture('basic', { items: ['foo', 'bar', 'baz'], selectedItem: 'foo' });
-          });
-
+        context('when setting the list of elements on the selector', () => {
           it('the element has the correct number of nav items', () => {
             // Arrange
-            const navItems = element.querySelectorAll('nav > div');
+            const element = fixture('basic');
+
+            // Act
+            element.set('items', [
+              {
+                display: 'Foo!',
+                value: 'foo'
+              },
+              {
+                display: 'Bar!',
+                value: 'bar'
+              },
+              {
+                display: 'Baz!',
+                value: 'baz'
+              }
+            ]);
+            flush(() => {});
+            const navItems = element.querySelectorAll('.nav-item');
 
             // Assert
             expect(navItems.length).to.equal(3);
           });
+        });
 
+        context('when setting the selected item on the selector', () => {
           it('the correct nav item is selected', () => {
             // Arrange
-            const selectedItem = element.querySelectorAll('nav > div').filter(i => i.innerText === 'foo');
+            const element = fixture('basic');
+
+            element.set('items', [
+              {
+                display: 'Foo!',
+                value: 'foo'
+              },
+              {
+                display: 'Bar!',
+                value: 'bar'
+              },
+              {
+                display: 'Baz!',
+                value: 'baz'
+              }
+            ]);
+
+            // Act
+            element.set('selectedItem', 'bar');
+            flush(() => {});
+
+            const navItems = [].slice.call(element.querySelectorAll('.nav-item'));
+            for (let i of navItems) { console.log(i.classList) }
+            const selectedItem = navItems.find(i => i.dataItemName === 'bar');
 
             // Assert
-            expect(selectedItem.classList().has('slected')).to.be.true;
+            expect(selectedItem.classList.contains('selected')).to.be.true;
           });
         });
       });
