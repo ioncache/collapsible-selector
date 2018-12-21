@@ -12,13 +12,20 @@
       /**
        * Text to be used on the dropdown menu as the default state
        */
-      dropdownText: {
+      dropdownButtonText: {
         type: String,
         value: 'More...'
       },
 
       /**
        * The list of items that the collapsible-selector should display
+       *
+       * Each element in the list should be in the format:
+       *
+       * {
+       *   display: 'This is an item',
+       *   value: 'itemId'
+       * }
        */
       items: {
         type: Array,
@@ -130,6 +137,7 @@
      * @returns {object} Returns an object with the details of the widths
      */
     _calculateSizeInfo: function() {
+      // convert a NodeList into an array so we can use reduce
       const items = [].slice.call(this.querySelectorAll('.nav-item'));
 
       return items.reduce(
@@ -194,9 +202,9 @@
 
           for (let i = this.items.length - 1; i >= 0; i--) {
             // ignore the currently selected item so that it stays always visible
-            if (this.items[i] !== this.selectedItem) {
-              visibleItemWidth -= this._sizeInfo.itemDetails[this.items[i]].width;
-              this._sizeInfo.itemDetails[this.items[i]].el.classList.add('hide');
+            if (this.items[i].value !== this.selectedItem) {
+              visibleItemWidth -= this._sizeInfo.itemDetails[this.items[i].value].width;
+              this._sizeInfo.itemDetails[this.items[i].value].el.classList.add('hide');
               this.unshift('_dropdownItems', this.items[i]);
 
               if (visibleItemWidth <= availableWidth) {
@@ -246,7 +254,7 @@
           // if the selected item is no longer in the item list, set the selected item to the first item
           // whenever the selected item changes, this._calculate is called
           if (items.indexOf(this.selectedItem) === -1) {
-            this.set('selectedItem', items[0]);
+            this.set('selectedItem', items[0].value);
           } else {
             this._calculate();
           }
@@ -330,7 +338,7 @@
      * @returns {void}
      */
     _setSelectedIndicator: function() {
-      const selectedIndex = this.items.findIndex(item => item === this.selectedItem);
+      const selectedIndex = this.items.findIndex(item => item.value === this.selectedItem);
       const selectedDomElement = this.querySelectorAll('.nav-item')[selectedIndex];
 
       if (selectedDomElement) {
@@ -362,6 +370,8 @@
     },
 
     _setSelectedItemFromNav: function(e) {
+      // when selecting from the nav directly, there is no need to recalculate
+      // since we know that the currently visible items already fit correctly
       this._skipNextCalculate = true;
       this._setSelectedItem(e);
     },

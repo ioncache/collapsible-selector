@@ -26,10 +26,10 @@ Works in a similar fashion to the tabs bar in chrome/firefox dev tools.
       <template is="dom-repeat" items="[[items]]">
         <button
           class="nav-item"
-          data-item-name="[[item]]"
+          data-item-name="[[item.value]]"
           on-tap="_setSelectedItemFromNav"
         >
-          [[item]]
+          [[item.display]]
         </button>
       </template>
 
@@ -39,17 +39,17 @@ Works in a similar fashion to the tabs bar in chrome/firefox dev tools.
           on-focusout="_closeDropdown"
           on-tap="_openDropdown"
         >
-          [[dropdownText]]
+          [[dropdownButtonText]]
         </button>
 
         <div class="dropdown-items">
           <template is="dom-repeat" items="[[_dropdownItems]]">
             <button
               class="dropdown-item"
-              data-item-name="[[item]]"
+              data-item-name="[[item.value]]"
               on-mousedown="_setSelectedItem"
             >
-              [[item]]
+              [[item.display]]
             </button>
           </template>
         </div>

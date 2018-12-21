@@ -169,7 +169,12 @@
       },
 
       _tabsChanged: function(change) {
-        this.set('selectedTabs', this.tabs.filter(i => i.selected).map(i => i.name));
+        this.set('selectedTabs', this.tabs.filter(i => i.selected).map(i => {
+          return {
+            display: i.name,
+            value: i.name
+          };
+        }));
       }
     });
   </script>
