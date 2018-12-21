@@ -46,6 +46,7 @@
         @apply --collapsible-selector-nav-bar;
       }
 
+      /* reset button styles */
       button {
         -moz-appearance: none;
         -webkit-appearance: none;
@@ -71,7 +72,7 @@
       }
 
       button:focus {
-        outline: 2px solid var(--collapsible-selector-highlight-color);
+        outline: 2px solid var(--collapsible-selector-highlight-color, var(--collapsible-selector-default-highlight-color));
         outline-offset: 0;
       }
 

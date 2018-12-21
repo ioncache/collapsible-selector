@@ -10,7 +10,7 @@
       /*********************/
 
       /**
-       * Text to be used on the dropdown menu as the default state
+       * The text to display on the dropdown menu button.
        */
       dropdownButtonText: {
         type: String,
@@ -18,7 +18,7 @@
       },
 
       /**
-       * The list of items that the collapsible-selector should display
+       * The list of items that the collapsible-selector should display.
        *
        * Each element in the list should be in the format:
        *
@@ -51,11 +51,13 @@
        */
       resizeWaitTime: {
         type: Number,
-        value: 0
+        value: 20
       },
 
       /**
-       * The name of the item that is currently selected
+       * The name of the item that is currently selected.
+       *
+       * This will notify on change so it can be used as a setter in the parent component.
        */
       selectedItem: {
         type: String,
@@ -67,12 +69,15 @@
       /* Private properties */
       /**********************/
 
+      /**
+       * The list of items that will appear in the dropdown menu.
+       */
       _dropdownItems: {
         type: Array
       },
 
       /**
-       * Whether the element has finished an initial load
+       * Whether the element has finished an initial load.
        */
       _isLoaded: {
         type: String,
@@ -81,7 +86,7 @@
       },
 
       /**
-       * Keeps track of the sizes of all items, the dropdown and the nav size
+       * Keeps track of the sizes of all items, the dropdown and the nav size.
        */
       _sizeInfo: {
         type: Object,
@@ -89,7 +94,7 @@
       },
 
       /**
-       * Flag to keep track of whether to skip the next _calculate call
+       * Flag to keep track of whether to skip the next _calculate call.
        */
       _skipNextCalculate: {
         type: Boolean,
@@ -251,9 +256,9 @@
     _itemsChanged: function(items) {
       let observer = new MutationObserver((mutationsList, observer) => {
         if (this.querySelectorAll('.nav-item').length === items.length) {
-          // if the selected item is no longer in the item list, set the selected item to the first item
-          // whenever the selected item changes, this._calculate is called
-          if (items.indexOf(this.selectedItem) === -1) {
+          if (_.findIndex(items, i => i.value === this.selectedItem) === -1) {
+            // if the selected item is no longer in the item list, set the selected item to the first item
+            // whenever the selected item changes this._calculate is called
             this.set('selectedItem', items[0].value);
           } else {
             this._calculate();
@@ -360,7 +365,6 @@
      * @param {event} e Polymer on-tap event for a selected nav item
      *
      * @returns {void}
-     *
      */
     _setSelectedItem: function(e) {
       e.preventDefault();
