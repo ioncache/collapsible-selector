@@ -1,7 +1,10 @@
 {
   "name": "collapsible-selector",
+  "version": "0.0.1",
   "description": "Polymer JS custom selector element that collapses based on available width.",
   "main": "collapsible-selector.html",
+  "author": "Mark Jubenville <ioncache@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.9.0",
     "lodash": "3.10.1"
