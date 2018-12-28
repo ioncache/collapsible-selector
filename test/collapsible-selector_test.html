@@ -29,7 +29,7 @@
         });
 
         context('when setting the list of elements on the selector', () => {
-          it('the element has the correct number of nav items', () => {
+          it('the element has the correct number of nav items', done => {
             // Arrange
             const element = fixture('basic');
 
@@ -48,16 +48,20 @@
                 value: 'baz'
               }
             ]);
-            flush(() => {});
-            const navItems = element.querySelectorAll('.nav-item');
 
-            // Assert
-            expect(navItems.length).to.equal(3);
+            flush(() => {
+              const navItems = element.querySelectorAll('.nav-item');
+
+              // Assert
+              expect(navItems.length).to.equal(3);
+
+              done();
+            });
           });
         });
 
         context('when setting the selected item on the selector', () => {
-          it('the correct nav item is selected', () => {
+          it('the correct nav item is selected', done => {
             // Arrange
             const element = fixture('basic');
 
@@ -76,16 +80,21 @@
               }
             ]);
 
-            // Act
-            element.set('selectedItem', 'bar');
-            flush(() => {});
+            // first flush allows for the setting of the items property and associated observers
+            flush(() => {
+              // Act
+              element.set('selectedItem', 'bar');
 
-            const navItems = [].slice.call(element.querySelectorAll('.nav-item'));
-            for (let i of navItems) { console.log(i.classList) }
-            const selectedItem = navItems.find(i => i.dataItemName === 'bar');
+              flush(() => {
+                const navItems = [].slice.call(element.querySelectorAll('.nav-item'));
+                const selectedItem = navItems.find(i => i.dataItemName === 'bar');
 
-            // Assert
-            expect(selectedItem.classList.contains('selected')).to.be.true;
+                // Assert
+                expect(selectedItem.classList.contains('selected')).to.be.true;
+
+                done();
+              });
+            });
           });
         });
       });
