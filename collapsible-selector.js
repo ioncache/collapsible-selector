@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+(function(_) {
   Polymer({
     is: 'collapsible-selector',
 
@@ -223,6 +223,13 @@
       }
     },
 
+    /**
+     * Method to close the dropdown
+     *
+     * @param {event} e Polymer on-focus event when clicking off the dropdown
+     *
+     * @returns {void}
+     */
     _closeDropdown: function(e) {
       if (e) {
         e.preventDefault();
@@ -271,9 +278,16 @@
         }
       });
 
-      observer.observe(this.querySelector('nav'), { childList: true });
+      observer.observe(this.querySelector('nav'), { characterData: true, childList: true, subtree: true });
     },
 
+    /**
+     * Method to open the dropdown
+     *
+     * @param {event} e Polymer on-tap event when clicking on the dropdown button
+     *
+     * @returns {void}
+     */
     _openDropdown: function(e) {
       if (e) {
         e.preventDefault();
@@ -361,20 +375,33 @@
     },
 
     /**
-     * Method to set the selected item based on a tap event on a nav item
+     * Method to set the selected item based on a tap event on an item in the dropdown
      *
-     * @param {event} e Polymer on-tap event for a selected nav item
+     * @param {event} e Polymer on-tap event
      *
      * @returns {void}
      */
     _setSelectedItem: function(e) {
-      e.preventDefault();
+      if (e) {
+        e.preventDefault();
+      }
 
       this.selectedItem = e.target.dataItemName;
       this._closeDropdown();
     },
 
+    /**
+     * Method to set the selected item based on a tap event on a nav item
+     *
+     * @param {event} e Polymer on-tap event
+     *
+     * @returns {void}
+     */
     _setSelectedItemFromNav: function(e) {
+      if (e) {
+        e.preventDefault();
+      }
+
       // when selecting from the nav directly, there is no need to recalculate
       // since we know that the currently visible items already fit correctly
       this._skipNextCalculate = true;
@@ -400,4 +427,4 @@
       }
     }
   });
-})();
+})(window._);
