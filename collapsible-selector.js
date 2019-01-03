@@ -124,12 +124,15 @@
     _calculate: function() {
       if (this._skipNextCalculate) {
         this._skipNextCalculate = false;
+        this._setSelectedIndicator();
       } else {
-        this.set('_sizeInfo', this._calculateSizeInfo());
-        this._calculateVisibleItems();
+        this._calculateSizeInfo()
+        .then((sizeInfo) => {
+          this.set('_sizeInfo', sizeInfo);
+          this._calculateVisibleItems();
+          this._setSelectedIndicator();
+        });
       }
-
-      this._setSelectedIndicator();
     },
 
     /**
@@ -139,40 +142,63 @@
      * - the dropdown menu
      * - the nav element itself
      *
+     * FIXME: the setInterval in this method is a temporary solution until we can
+     *        figure a better way to handle the race condition of the items
+     *        not yet being in the DOM when we want to calculate their size
+     *
      * @returns {object} Returns an object with the details of the widths
      */
     _calculateSizeInfo: function() {
       // convert a NodeList into an array so we can use reduce
-      const items = [].slice.call(this.querySelectorAll('.nav-item'));
+      let items = [].slice.call(this.querySelectorAll('.nav-item'));
 
-      return items.reduce(
-        (accumulator, item, index) => {
-          // remove the hide class as items set to display: none have no width
-          // and we want to ensure we recalculate the correct sizes of all items
-          // FIXME: possibly we should just draw a copy of all the items offscreen once
-          //        and calculate sizes there instead, that way the items in the
-          //        nav bar aren't briefly shown before possibly being rehidden
-          item.classList.remove('hide');
+      // TODO: if we stick with the setInterval and promise version of the
+      //       _calculateSizeInfo method, then this calcSizeInfo function should
+      //       be moved to a new method so it can be tested properly
+      const calcSizeInfo = () => {
+        return items.reduce(
+          (accumulator, item, index) => {
+            // remove the hide class as items set to display: none have no width
+            // and we want to ensure we recalculate the correct sizes of all items
+            // FIXME: possibly we should just draw a copy of all the items offscreen once
+            //        and calculate sizes there instead, that way the items in the
+            //        nav bar aren't briefly shown before possibly being rehidden
+            item.classList.remove('hide');
 
-          accumulator.itemDetails[item.dataItemName] = {
-            el: item,
-            position: index,
-            width: item.offsetWidth
-          };
-          accumulator.totalItemWidth += item.offsetWidth;
+            accumulator.itemDetails[item.dataItemName] = {
+              el: item,
+              position: index,
+              width: item.offsetWidth
+            };
+            accumulator.totalItemWidth += item.offsetWidth;
 
-          return accumulator;
-        },
-        {
-          dropdownDetails: {
-            el: this.querySelector('.dropdown-container'),
-            width: this.querySelector('.dropdown-container').offsetWidth
+            return accumulator;
           },
-          itemDetails: {},
-          navWidth: this.querySelector('.nav-bar').offsetWidth,
-          totalItemWidth: 0
+          {
+            dropdownDetails: {
+              el: this.querySelector('.dropdown-container'),
+              width: this.querySelector('.dropdown-container').offsetWidth
+            },
+            itemDetails: {},
+            navWidth: this.querySelector('.nav-bar').offsetWidth,
+            totalItemWidth: 0
+          }
+        );
+      };
+
+      return new Promise((resolve, reject) => {
+        if (items.length === 0) {
+          let sizeInterval = setInterval(() => {
+            items = [].slice.call(this.querySelectorAll('.nav-item'));
+            if (items.length !== 0) {
+              clearInterval(sizeInterval);
+              resolve(calcSizeInfo());
+            }
+          }, 150);
+        } else {
+          resolve(calcSizeInfo());
         }
-      );
+      });
     },
 
     /**
