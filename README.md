@@ -1,5 +1,7 @@
 # \<collapsible-selector\>
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/ioncache/collapsible-selector.svg)](https://greenkeeper.io/)
+
 Polymer JS custom selector element that collapses based on available width.
 
 ## Install dependencies
