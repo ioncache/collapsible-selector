@@ -28,7 +28,7 @@ jobs:
 
       - run: npm install
 
-      - run: bower install
+      - run: npx bower install
 
       - save_cache:
           paths:
