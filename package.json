@@ -10,7 +10,7 @@
   "author": "Mark Jubenville <ioncache@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^3.10.1"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "polymer-cli": "^1.1.0",
