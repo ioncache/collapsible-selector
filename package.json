@@ -9,6 +9,9 @@
   },
   "author": "Mark Jubenville <ioncache@gmail.com>",
   "license": "MIT",
+  "dependencies": {
+    "lodash": "^3.10.1"
+  },
   "devDependencies": {
     "polymer-cli": "^1.1.0",
     "split-me": "^1.1.5",
