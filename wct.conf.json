@@ -18,7 +18,7 @@
 
   "plugins": {
     "local": {
-      "browsers": ["chrome"]
+      "browsers": ["canary"]
     },
 
     "xunit-reporter": {

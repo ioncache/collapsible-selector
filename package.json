@@ -4,13 +4,15 @@
   "description": "Polymer JS custom selector element that collapses based on available width.",
   "main": "index.html",
   "scripts": {
-    "serve": "./node_modules/.bin/polymer serve",
-    "test": "./node_modules/.bin/polymer test"
+    "report-coverage": "npx codecov wct_coverage/cobertura-coverage.xml",
+    "serve": "npx polymer serve",
+    "test": "npx polymer test"
   },
   "author": "Mark Jubenville <ioncache@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "bower": "^1.8.8",
+    "codecov": "^3.6.1",
     "polymer-cli": "^1.1.0",
     "split-me": "^1.1.5",
     "wct-xunit-reporter": "^1.0.2",
