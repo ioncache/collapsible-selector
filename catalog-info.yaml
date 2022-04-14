@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: collapsible-selector
+  annotations:
+    github.com/project-slug: ioncache/collapsible-selector
+spec:
+  type: other
+  lifecycle: unknown
+  owner: sre
